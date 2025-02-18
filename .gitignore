@@ -1,0 +1,45 @@
+# MATLAB temporary files and autosave
+*.asv
+*.m~ 
+*.bak 
+*.swp
+
+# MATLAB figure files
+*.fig
+
+# MATLAB workspace and simulation files
+*.mdl
+*.slx
+*.slxp
+*.ssc
+*.slprj/
+*.autosave/
+*.sim
+
+# MATLAB code generation and compiled files
+*.mex*
+*.mlappinstall
+*.mlpkginstall
+*.mltbx
+*.mlapp
+*.p
+
+# Cache, logs, and temp directories
+.DS_Store
+*.log
+*.out
+*.err
+*.tmp
+*.ctf
+*.matlab/
+*.mcrCache*/
+*.mcr_cache/
+*.R201*/  # MATLAB cache folders for different releases
+*.mlproj/
+
+# Live scripts backup files
+*.mlapp~
+
+# Hidden system files (Mac & Windows)
+Thumbs.db
+desktop.ini
