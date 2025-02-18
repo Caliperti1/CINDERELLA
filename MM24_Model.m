@@ -1,14 +1,10 @@
-clc 
-clear 
-close all
-
-
 %% Load Data from pre proccessing script 
 load("MM24_PreProc_Out.mat")
 
-% get rid of this if we rerun pre processing 
-X = XTrain;
-Y = YTrain;
+
+%%%%% WEWRITE ALL OF THIS TO TRAIN MODELS AFTER PREPROC * WILL RUN IN A
+%%%%% MAIN TRIAN SCRIPT 
+
 
 %% Train / Validation Split 
 % Create randomized cross validation holdout 

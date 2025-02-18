@@ -1,7 +1,5 @@
-clc 
-clear 
-close all
-
+%% Looks like I was using this to train models using the GUI, 
+% We're going to just rebuild a train script toi do that 
 
 %% Load Data from pre proccessing script 
 load("workspace20MAR.mat");
