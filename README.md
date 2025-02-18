@@ -1,5 +1,5 @@
 # CINDERELLA
-Computational Intelligence w/ NCAA Data for Evaluating Rankings and Learning &amp; Locating Anomalies (March Madness Pipeline)
+**Computational Intelligence w/ NCAA Data for Evaluating Rankings and Learning &amp; Locating Anomalies (March Madness Pipeline)**
 
 ## Overall Approach 
 I threw this code together the night before brackets were due last year, so we are uploading the current state of the code so we can get a little more of a head start on it this year!
