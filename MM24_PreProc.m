@@ -361,7 +361,8 @@ end
 XVec(isnan(XVec)) = 0;
 
 %% Save workspace to be used in model script 
-save('MM24_PreProc_Out2','XVec','YVec', 'XTestOrder','YTestIdx','X');
+% save('MM24_PreProc_Out','XVec','YVec', 'XTestOrder','YTestIdx','X');
+save('MM24_PreProc_Out.mat')
 
 %% Harry's Approach 
 % Each row of YgamesReg is the score difernetial between the two teams
