@@ -1,23 +1,16 @@
 %% Tournament Sim
 % Tournament sim takes the 64 Teams in the NCAA March Madness Bracket and
 % uses the GamePredict function to simulate the tournament and determine
-% the winners of each matchup. Prior to this Script PreProccess organizes
-% the teams and their coresponding data, FeatureEngineer Creates feature
-% spaces for each team, ModelTrain trains new models to be adde to the
-% ensamble used by gamePredict.
+% the winners of each matchup. 
 
 clear ; clc ; close all 
 
-%% Inputs will be:
-% TournamentSeeds - table of seeds and Team ID
-% model type  
-modelType = 'Classifier';
+%% Configs
+configs
 
 %% Load data for testing 
 DataManager
-
-% Team Features 
-% FeatureEngineer % Remove once we update feature method to just call FEatureengineer 
+    % 
 
 %% Create some counters to build out the Game Structure 
 % Counter for regions 
@@ -218,6 +211,19 @@ winningSeeds = [Games(57:60).WinnerSeedstr];
 
    Games = UpdateNextRound(Games,63,TournamentSeeds,RawData,modelType);
                    
+%% Add Additional Data to Games for completeness
+
+for gg = 1:length(Games)
+    name1idx = find(Games(gg).Team1ID == teamIDs.TeamID);
+    Games(gg).Team1Name = string(teamIDs.TeamName(name1idx));
+
+    name2idx = find(Games(gg).Team2ID == teamIDs.TeamID);
+    Games(gg).Team2Name = string(teamIDs.TeamName(name2idx));
+
+    namewidx = find(Games(gg).WinnerID == teamIDs.TeamID);
+    Games(gg).WinnerName = string(teamIDs.TeamName(namewidx));
+
+end
 
 %% Functions for repeated updates 
 
