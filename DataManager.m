@@ -13,9 +13,18 @@ TournamentSeeds.Tournament = string(TournamentSeeds.Tournament);
 TournamentSeeds = TournamentSeeds(TournamentSeeds.Tournament == "M",:);
  % Tournament (M or W) // Seed // Team ID (Key for other tables)
 
-%% Raw Data 
+%% Team Names 
+teamIDs = readtable('MTeams.csv');
 
-RawData = [];
+% Detailed Regular Season results 
+RawData.regularSeason = readtable('MRegularSeasonDetailedResults.csv');
+
+% Detialed Tournament results 
+RawData.tournamentResults = readtable('MNCAATourneyDetailedResults.csv');
+
+% Conference Tournament results 
+RawData.confTournamentResults = readtable('MConferenceTourneyGames.csv');
+
 
 %% Back to root 
 cd ..
