@@ -5,12 +5,20 @@
 
 clear ; clc ; close all 
 
-%% Configs
+%% Configss
 configs
 
 %% Load data for testing 
-DataManager
-    % 
+if ~exist('RawData.mat','file')
+    DataManager
+end 
+
+load('RawData.mat')
+RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
+RawData.TeamNames = readtable('MTeams.csv');
+RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);
+TournamentSeeds = RawData.TournamentSeeds;
+TeamIDs = RawData.TeamNames;
 
 %% Create some counters to build out the Game Structure 
 % Counter for regions 
@@ -214,14 +222,14 @@ winningSeeds = [Games(57:60).WinnerSeedstr];
 %% Add Additional Data to Games for completeness
 
 for gg = 1:length(Games)
-    name1idx = find(Games(gg).Team1ID == teamIDs.TeamID);
-    Games(gg).Team1Name = string(teamIDs.TeamName(name1idx));
+    name1idx = find(Games(gg).Team1ID == TeamIDs.TeamID);
+    Games(gg).Team1Name = string(TeamIDs.TeamName(name1idx));
 
-    name2idx = find(Games(gg).Team2ID == teamIDs.TeamID);
-    Games(gg).Team2Name = string(teamIDs.TeamName(name2idx));
+    name2idx = find(Games(gg).Team2ID == TeamIDs.TeamID);
+    Games(gg).Team2Name = string(TeamIDs.TeamName(name2idx));
 
-    namewidx = find(Games(gg).WinnerID == teamIDs.TeamID);
-    Games(gg).WinnerName = string(teamIDs.TeamName(namewidx));
+    namewidx = find(Games(gg).WinnerID == TeamIDs.TeamID);
+    Games(gg).WinnerName = string(TeamIDs.TeamName(namewidx));
 
 end
 
