@@ -8,6 +8,6 @@ function featureSpace = FeatureEngineer(TeamID1,TeamID2, rawData)
 
     % Will update this with actual features but for now making sure
     % TournamentSim can prooperly call it 
-    featureSpace = [TeamID1 TeamID2 1 4];
+    featureSpace = [1 2 1 4];
 
 end 
