@@ -14,9 +14,10 @@ if ~exist('RawData.mat','file')
 end 
 
 load('RawData.mat')
-RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
-RawData.TeamNames = readtable('MTeams.csv');
-RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);
+% RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
+% RawData.TeamNames = readtable('MTeams.csv');
+% RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);
+
 TournamentSeeds = RawData.TournamentSeeds;
 TeamIDs = RawData.TeamNames;
 
@@ -143,7 +144,13 @@ for gg = 1:62
     
             Games(gg).Team1ID = TournamentSeeds.TeamID(idx1);
             Games(gg).Team2ID = TournamentSeeds.TeamID(idx2);
-   
+
+            % Add col with TeamIDYr to match RawData
+            Games(gg).Team1IDYr = tournamentYear + "_" +  ...
+                string(Games(gg).Team1ID);
+            Games(gg).Team2IDYr = tournamentYear + "_" +  ...
+                string(Games(gg).Team2ID);
+               
        end 
 end 
 
@@ -282,6 +289,7 @@ end
 
 function Games = UpdateNextRound(Games,counter,TournamentSeeds,RawData,modelType)       
 
+    configs
       % Populate fields for second round 
             % get team ID
             idx1 = find(TournamentSeeds.Seed == Games(counter).Team1Seedstr,1);
@@ -292,6 +300,9 @@ function Games = UpdateNextRound(Games,counter,TournamentSeeds,RawData,modelType
             
             Games(counter).Team1ID = TournamentSeeds.TeamID(idx1);
             Games(counter).Team2ID = TournamentSeeds.TeamID(idx2);
+
+            Games(counter).Team1IDYr = tournamentYear + "_" + string(Games(counter).Team1ID);
+            Games(counter).Team2IDYr = tournamentYear + "_" + string(Games(counter).Team2ID);
 
         % Get features 
             Games = UpdateWithFeatures(RawData,counter,Games);

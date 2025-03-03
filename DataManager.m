@@ -2,6 +2,9 @@
 % This will read all of the necessary data out of the data folder (Updated
 % yearly from Kaggle's March Machine Learning Madness challenge)
 
+% Laod configs 
+configs
+
 % Timer 
 DataManTimer = tic;
 % Set Data directory 
@@ -42,6 +45,67 @@ RawData.TeamNames = readtable('MTeams.csv');
 
 %% Helpers 
 DetailedHeaders = RawData.regularSeason.Properties.VariableNames;
+
+%% Team Stats Cols 
+    
+    % 1: Wins
+    % 2: Losses 
+    % 3: Points For Per Game
+    % 4: Points Against Per Game
+    % 5: Field Goals Made Per Game
+    % 6: Field Goals Attempted Per Game
+    % 7: 3PT Field Goals Made Per Game
+    % 8: 3PT Field Goals Attempted Per Game
+    % 9: Free Throws Made Per Game
+    % 10: Free Throws Attempted Per Game
+    % 11: Offensive Rebounds Per Game
+    % 12: Defensive Rebounds Per Game
+    % 13: Assists Per Game
+    % 14: Turnovers Per Game
+    % 15: Steals Per Game
+    % 16: Blocks Per Game
+    % 17: Personal Fouls Per Game
+    % 18: Conferenec Tournament Wins 
+    % 19: Conference Tournament Losses 
+    % 20: NCAA Tournament Wins 
+    % 21: NCAA Tournament Losses 
+    % 22: NCAA Tournament Points For Per Game
+    % 23: NCAA Tournament Points Against Per Game
+    % 24: NCAA Tournament Field Goals Made Per Game
+    % 25: NCAA Tournament Field Goals Attempted Per Game
+    % 26: NCAA Tournament 3PT Field Goals Made Per Game
+    % 27: NCAA Tournament 3PT Field Goals Attempted Per Game
+    % 28: NCAA Tournament Free Throws Made Per Game
+    % 29: NCAA Tournament Free Throws Attempted Per Game
+    % 30: NCAA Tournament Offensive Rebounds Per Game
+    % 31: NCAA Tournament Defensive Rebounds Per Game
+    % 32: NCAA Tournament Assists Per Game
+    % 33: NCAA Tournament Turnovers Per Game
+    % 34: NCAA Tournament Steals Per Game
+    % 35: NCAA Tournament Blocks Per Game
+    % 36: NCAA Tournament Personal Fouls Per Game
+    % 37: NCAA Tournament Wins (DUPLICATE)
+    % 38: NCAA Tournament Losses (DUPLICATE)
+    % 39: NCAA Tournament Bracket Challenge Points Earned 
+    % 40: 2nd Degree Regular Season Wins 
+    % 41: 2nd Degree Regular Season Losses 
+    % 42: 3rd Degree Regular Season Wins 
+    % 43: 3rd Degree Regular Season Losses 
+    % 44: 2nd Degree Regular Season Win Percentage 
+    % 45: 3rd Degree Regular Season Win Percentage
+    % 46: Field Goals Made Per Game Against 
+    % 47: Field Goals Attempted Per Game Against
+    % 48: 3PT Field Goals Made Per Game Against
+    % 49: 3PT Field Goals Attempted Per Game Against
+    % 50: Free Throws Made Per Game Against
+    % 51: Free Throws Attempted Per Game Against
+    % 52: Offensive Rebounds Per Game Against
+    % 53: Defensive Rebounds Per Game Against
+    % 54: Assists Per Game Against
+    % 55: Turnovers Per Game Against
+    % 56: Steals Per Game Against
+    % 57: Blocks Per Game Against
+    % 58: Personal Fouls Per Game Against
 
 %% Create Combo TeamID - Year tags 
 % Regular Season Table 
@@ -107,7 +171,7 @@ for gm = 1:height(RawData.regularSeason)
     RawData.TeamStats(WTeamIndx,1) =  RawData.TeamStats(WTeamIndx,1) + 1;
 
     % Col 2: Losses 
-    RawData.TeamStats(LTeamIndx,1) =  RawData.TeamStats(LTeamIndx,2) + 1;
+    RawData.TeamStats(LTeamIndx,2) =  RawData.TeamStats(LTeamIndx,2) + 1;
 
     % Col 3: Points for 
     RawData.TeamStats(WTeamIndx,3) =  RawData.TeamStats(WTeamIndx,3) + RawData.regularSeason.WScore(gm);
@@ -187,7 +251,7 @@ for tm = 1:height(RawData.TeamStats)
     end 
 end 
 
-%% Strength of Schedule Measures
+%% Tournament Stats
 
 % NCAA Tournament Wins 
 for tt = 1:height(RawData.tournamentResults)
@@ -216,7 +280,8 @@ for tt = 1:height(RawData.TeamStats)
     end 
 end 
 
-% Second Degree NCAA Tournament wins 
+%% Strength of Schedule measures 
+% Second Degree wins 
 for gg = 1:height(RawData.regularSeason)
     
     % Find teams that played in this game 
@@ -224,13 +289,15 @@ for gg = 1:height(RawData.regularSeason)
     LTeamIndx = find(RawData.TeamIDs == RawData.regularSeason.LTeamIDYr(gg));
 
     % Col 40: 2nd Degree wins  
-    RawData.TeamStats(WTeamIndx,40) =  RawData.TeamStats(WTeamIndx,40) + RawData.TeamStats(LTeamIndx,37);
-
-    % Col 41: 2nd Degree Bracket Points 
-     RawData.TeamStats(WTeamIndx,41) =  RawData.TeamStats(WTeamIndx,41) + RawData.TeamStats(LTeamIndx,39);
+    RawData.TeamStats(WTeamIndx,40) =  RawData.TeamStats(WTeamIndx,40) + RawData.TeamStats(LTeamIndx,1);
+    RawData.TeamStats(LTeamIndx,40) =  RawData.TeamStats(LTeamIndx,40) + RawData.TeamStats(WTeamIndx,1);
+    % Col 41: 2nd Degree loses  
+     
+    RawData.TeamStats(WTeamIndx,41) =  RawData.TeamStats(WTeamIndx,41) + RawData.TeamStats(LTeamIndx,2);
+    RawData.TeamStats(LTeamIndx,41) =  RawData.TeamStats(LTeamIndx,41) + RawData.TeamStats(WTeamIndx,2);
 end 
 
-% Third Degree NCAA Tournament wins 
+% Third Degree wins 
 % Find teams that played in this game 
 for gg = 1:height(RawData.regularSeason)
     WTeamIndx = find(RawData.TeamIDs == RawData.regularSeason.WTeamIDYr(gg));
@@ -238,10 +305,21 @@ for gg = 1:height(RawData.regularSeason)
 
     % Col 42: 3rd Degree wins  
     RawData.TeamStats(WTeamIndx,42) =  RawData.TeamStats(WTeamIndx,42) + RawData.TeamStats(LTeamIndx,40);
+     RawData.TeamStats(LTeamIndx,42) =  RawData.TeamStats(LTeamIndx,42) + RawData.TeamStats(WTeamIndx,40);
 
-    % Col 43: 3rd Degree Bracket Points 
+    % Col 43: 3rd Degree Losses
     RawData.TeamStats(WTeamIndx,43) =  RawData.TeamStats(WTeamIndx,43) + RawData.TeamStats(LTeamIndx,41);
+    RawData.TeamStats(LTeamIndx,43) =  RawData.TeamStats(LTeamIndx,43) + RawData.TeamStats(WTeamIndx,41);
+end 
 
+% 2nd an 3rd degree win percentages 
+for tt = 1:length(RawData.TeamStats)
+   
+    % Col 44: 2nd degree Win Percentage 
+    RawData.TeamStats(tt,44) = RawData.TeamStats(tt,40) / RawData.TeamStats(tt,41);
+
+    % Col 45: 3rd Degree Win Percentage 
+    RawData.TeamStats(tt,45) = RawData.TeamStats(tt,42) / RawData.TeamStats(tt,43);
 end 
 % FUTURE WORK: Weight each individual gane's stats by the quality of
 % opponent they played - would require moving this earlier in code? Or just
@@ -254,10 +332,10 @@ for gm = 1:height(RawData.regularSeason)
     WTeamIndx = find(RawData.TeamIDs == RawData.regularSeason.WTeamIDYr(gm));
     LTeamIndx = find(RawData.TeamIDs == RawData.regularSeason.LTeamIDYr(gm));
 
-    % Col 44 - 56 : Summary Stats 
-    for col = 44:56
-    RawData.TeamStats(LTeamIndx,col) = RawData.TeamStats(WTeamIndx,col) + RawData.regularSeason.(DetailedHeaders{col-35})(gm);
-    RawData.TeamStats(WTeamIndx,col) = RawData.TeamStats(LTeamIndx,col) + RawData.regularSeason.(DetailedHeaders{col-22})(gm);
+    % Col 46 - 58 : Summary Stats 
+    for col = 46:58
+    RawData.TeamStats(LTeamIndx,col) = RawData.TeamStats(WTeamIndx,col) + RawData.regularSeason.(DetailedHeaders{col-37})(gm);
+    RawData.TeamStats(WTeamIndx,col) = RawData.TeamStats(LTeamIndx,col) + RawData.regularSeason.(DetailedHeaders{col-24})(gm);
     end 
     
 end 
@@ -267,11 +345,10 @@ end
 for tm = 1:length(RawData.TeamStats)
     gms = RawData.TeamStats(tm,1) + RawData.TeamStats(tm,2);
 
-    for ss = 44:56
+    for ss = 46:58
        RawData.TeamStats(tm,ss) = RawData.TeamStats(tm,ss) / gms;
     end 
 end 
-
 
 %% Back to root 
 cd ..
@@ -280,6 +357,6 @@ cd ..
 save("RawData.mat","RawData");
 
 %% Timer 
-fprintf("Data Management complete, %f seconds \n\n",toc(DataManTimer))
+fprintf("Data Management complete, %f seconds \n\n",toc(DataManTimer));
 
 
