@@ -13,5 +13,10 @@ function winner = GamePredictClassifier(Features)
 
 Features = Features;
 
+%% We will have multiple models that are chosen using the ModelNum param and case switching. 
+% This will allow the montecarlo to randomly selected a model (or ensamble)
+% for each individual game
+
+% Will need to update Tournamentsim to have randi 
 winner = randi(2,1);
 end
