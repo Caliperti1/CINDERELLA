@@ -42,6 +42,9 @@ RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tourna
 % Team Names 
 RawData.TeamNames = readtable('MTeams.csv');
 
+% Secondary Tournament 
+RawData.OtherTourns = readtable("MSecondaryTourneyCompactResults.csv");
+
 
 %% Helpers 
 DetailedHeaders = RawData.regularSeason.Properties.VariableNames;
@@ -146,6 +149,17 @@ for ii = 1:height(RawData.Conferences)
     RawData.Conferences.TeamIDYr(ii) = ...
         string(RawData.Conferences.Season(ii)) + "_" +...
         string(RawData.Conferences.TeamID(ii));
+end 
+
+% Other Tournaments 
+for ii = 1:height(RawData.OtherTourns)
+    RawData.OtherTourns.WTeamIDYr(ii) = ...
+        string(RawData.OtherTourns.Season(ii)) + "_" +...
+        string(RawData.OtherTourns.WTeamID(ii));
+
+    RawData.OtherTourns.LTeamIDYr(ii) = ...
+        string(RawData.OtherTourns.Season(ii)) + "_" +...
+        string(RawData.OtherTourns.LTeamID(ii));
 end 
 
 
