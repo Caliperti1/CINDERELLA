@@ -1,6 +1,5 @@
 %% configs 
 
 % model type  
-modelType = 'Classifier';
+modelType = 'Regression';
 tournamentYear = 2024;
-FeatureSet = 1;

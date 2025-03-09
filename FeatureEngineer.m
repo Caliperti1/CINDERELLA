@@ -268,8 +268,8 @@ function FeatureSet = FeatureEngineer(TeamIDYr1,TeamIDYr2, RawData)
     
 %% Combine Features 
 
-% FeatureSet = [Team1OffFeats Team1DefFeats Team2OffFeats Team2DefFeats InteractionFeats];    
-    FeatureSet = Team1OffFeats;
+FeatureSet = [Team1OffFeats Team1DefFeats Team2OffFeats Team2DefFeats InteractionFeats];    
+    % FeatureSet = Team1OffFeats;
     % For trainign data we can add response variable in the training data gen
     % funciton 
 
