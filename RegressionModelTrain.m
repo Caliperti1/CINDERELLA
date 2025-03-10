@@ -6,7 +6,7 @@ if ~exist('Features.mat','file')
     TrainingDataGen
 end 
 
-load('Features.mat')
+load('TrainingData.mat')
 
 %% Gradient Boosted Bagged Trees 
 
@@ -59,6 +59,9 @@ xlim([-30 30])
 ylim([-30 30])
 hold off
 
+% save
+save("Models\GBTreeReg","GB_BaggedTree")
+
 %% Support Vector Machine (SVM) Regression
 
 SVMModel = fitrsvm(X, Y_reg, ...
@@ -109,6 +112,9 @@ xlim([-30 30])
 ylim([-30 30])
 hold off
 
+% save
+save("Models\SVM","SVMModel")
+
 %% Neural Network Regression
 
 NNModel = fitrnet(X, Y_reg, ...
@@ -157,5 +163,8 @@ grid on;
 xlim([-30 30])
 ylim([-30 30])
 hold off
+
+% save
+save("Models\NN_reg","NNModel")
 
 %% Export Models 
