@@ -3,20 +3,31 @@
 % This will be a binary classifier take in features for 2 different teams 
 % and return a 1 if team 1 is winner and 2 if team 2 is winner 
 
+% Randomly selects a model from the modelstruct and passes features to
+% predict winner 
+
 % We'll make another GamePredictRegression that returns a score
 % differnetial too 
 
-% For now This just randomy returns a 1 or a 2 to test the tournmantSim
-% funciton 
+function winner = GamePredictClassifier(Features,modelStruct)
 
-function winner = GamePredictClassifier(Features)
+    modelSelector = randi(length(modelStruct));
 
-Features = Features;
+    modelType = modelStruct(modelSelector).Type;
 
-%% We will have multiple models that are chosen using the ModelNum param and case switching. 
-% This will allow the montecarlo to randomly selected a model (or ensamble)
-% for each individual game
+    prediction = modelStruct(modelSelector).Model.predict(Features);
 
-% Will need to update Tournamentsim to have randi 
-winner = randi(2,1);
-end
+    if modelType == 'Regressor'
+        if prediction > 0 
+            winner = 1;
+        else 
+            winner = 0;
+        end 
+    elseif modelType =='Classifier'
+        winner = prediction;
+    end 
+
+
+end 
+
+

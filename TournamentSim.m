@@ -3,10 +3,12 @@
 % uses the GamePredict function to simulate the tournament and determine
 % the winners of each matchup. 
 
-clear ; clc ; close all 
-
 %% Configss
 configs
+
+%% Load Models
+% Loads all models into modelStruct 
+ModelAggregate
 
 %% Load data for testing 
 if ~exist('RawData.mat','file')
@@ -163,7 +165,7 @@ for gg = 1:32
             Games = UpdateWithFeatures(RawData,gg,Games);
 
             % Predict winner 
-            Games = UpdateWithWinner(Games,gg,modelType);
+            Games = UpdateWithWinner(Games,gg,modelStruct);
 end 
 
 %% Populate Round of 32
@@ -176,7 +178,7 @@ winningSeeds = [Games(1:32).WinnerSeedstr];
 
        
 
-        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelType);
+        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelStruct);
                    
    end 
     
@@ -188,7 +190,7 @@ winningSeeds = [Games(33:48).WinnerSeedstr];
        Games(gg).Team1Seedstr = intersect([Games(gg).Team1Seedstr], winningSeeds);
        Games(gg).Team2Seedstr = intersect([Games(gg).Team2Seedstr], winningSeeds);
 
-        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelType);
+        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelStruct);
                    
    end 
 
@@ -200,7 +202,7 @@ winningSeeds = [Games(49:56).WinnerSeedstr];
        Games(gg).Team1Seedstr = intersect([Games(gg).Team1Seedstr], winningSeeds);
        Games(gg).Team2Seedstr = intersect([Games(gg).Team2Seedstr], winningSeeds);
 
-        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelType);
+        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelStruct);
                
    end 
 
@@ -212,7 +214,7 @@ winningSeeds = [Games(57:60).WinnerSeedstr];
        Games(gg).Team1Seedstr = intersect([Games(gg).Team1Seedstr], winningSeeds);
        Games(gg).Team2Seedstr = intersect([Games(gg).Team2Seedstr], winningSeeds);
 
-        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelType);
+        Games = UpdateNextRound(Games,gg,TournamentSeeds,RawData,modelStruct);
                    
    end 
 
@@ -224,7 +226,7 @@ winningSeeds = [Games(57:60).WinnerSeedstr];
    Games(63).Team2ID = Games(62).WinnerID;
    Games(63).Team2Seedstr = Games(62).WinnerSeedstr;
 
-   Games = UpdateNextRound(Games,63,TournamentSeeds,RawData,modelType);
+   Games = UpdateNextRound(Games,63,TournamentSeeds,RawData,modelStruct);
                    
 %% Add Additional Data to Games for completeness
 
@@ -251,43 +253,27 @@ function Games = UpdateWithFeatures(RawData,counter,Games)
             % Games(counter).Team2Features = Features(idx2).Features;
 
             Games(counter).Features = FeatureEngineer(...
-                    Games(counter).Team1ID,...
-                    Games(counter).Team2ID,...
+                    Games(counter).Team1IDYr,...
+                    Games(counter).Team2IDYr,...
                     RawData);
 end 
 
-function Games = UpdateWithWinner(Games,counter,modelType)
+function Games = UpdateWithWinner(Games,counter,modelStruct)
 
-    if modelType == 'Classifier'
 
-            winner = GamePredictClassifier(Games(counter).Features);
+        winner = GamePredictClassifier(Games(counter).Features,modelStruct);
 
-            if winner == 1 
-                Games(counter).WinnerID = Games(counter).Team1ID;
-                Games(counter).WinnerSeedstr = Games(counter).Team1Seedstr;
-            else 
-                Games(counter).WinnerID = Games(counter).Team2ID;
-                Games(counter).WinnerSeedstr = Games(counter).Team2Seedstr;
-            end 
-    end 
-
-    if modelType == 'Regression'
-
-        scoredif = GamePredictRegression(Games(counter).Features);
-
-        
-            if scoredif > 0
-                Games(counter).WinnerID = Games(counter).Team1ID;
-                Games(counter).WinnerSeedstr = Games(counter).Team1Seedstr;
-            else 
-                Games(counter).WinnerID = Games(counter).Team2ID;
-                Games(counter).WinnerSeedstr = Games(counter).Team2Seedstr;
-            end 
-    end 
+        if winner == 1 
+            Games(counter).WinnerID = Games(counter).Team1ID;
+            Games(counter).WinnerSeedstr = Games(counter).Team1Seedstr;
+        else 
+            Games(counter).WinnerID = Games(counter).Team2ID;
+            Games(counter).WinnerSeedstr = Games(counter).Team2Seedstr;
+        end 
 
 end 
 
-function Games = UpdateNextRound(Games,counter,TournamentSeeds,RawData,modelType)       
+function Games = UpdateNextRound(Games,counter,TournamentSeeds,RawData,modelStruct)       
 
     configs
       % Populate fields for second round 
@@ -308,7 +294,7 @@ function Games = UpdateNextRound(Games,counter,TournamentSeeds,RawData,modelType
             Games = UpdateWithFeatures(RawData,counter,Games);
 
         % Predict winner 
-            Games = UpdateWithWinner(Games,counter,modelType);
+            Games = UpdateWithWinner(Games,counter,modelStruct);
 
 
 end 
