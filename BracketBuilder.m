@@ -1,7 +1,16 @@
 % %% Tournament Visualiztion
 % Create Dict of teams and games to games matrix indexes 
-function Bracket = BracketBuilder(Games,netWinners,varargin)
-
+function Bracket = BracketBuilder(Games,netWins,varargin)
+if ~isempty(varargin)
+    netWin_conf = varargin{1}
+    netWinners = strings(length(netWins),1);
+    
+    for jj = 1:length(netWins)
+        netWinners(jj) = netWins(jj) + "( " + num2str(round(netWin_conf(jj),2)) + " )";
+    end 
+else 
+    netWinners = netWins;
+end 
 %% Brute Force 
 R64Widx = [1,29,17,13,21,9,25,5];
 R64W = [Games(R64Widx(1)).Team1Name;
