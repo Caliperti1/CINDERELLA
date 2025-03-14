@@ -164,7 +164,6 @@ end
 
 
 %% Create Summary Stats Table 
-% load("RawData.mat");
 
 % Find all unique teams 
 RawData.TeamIDs = unique([RawData.regularSeason.LTeamIDYr,RawData.regularSeason.WTeamIDYr]);
@@ -333,7 +332,7 @@ for tt = 1:length(RawData.TeamStats)
     RawData.TeamStats(tt,44) = RawData.TeamStats(tt,40) / RawData.TeamStats(tt,41);
 
     % Col 45: 3rd Degree Win Percentage 
-    RawData.TeamStats(tt,45) = RawData.TeamStats(tt,42) / RawData.TeamStats(tt,43);
+    RawData.TeamStats(tt,45) = RawData.TeamStats(tt,42) / (RawData.TeamStats(tt,43) + RawData.TeamStats(tt,42));
 end 
 % FUTURE WORK: Weight each individual gane's stats by the quality of
 % opponent they played - would require moving this earlier in code? Or just
@@ -364,11 +363,92 @@ for tm = 1:length(RawData.TeamStats)
     end 
 end 
 
+%% Method 2: Strucutre of all games per Team 
+
+% Create structure called Data where each Team has a row 
+Data = struct('TeamID', cell(1,numel(RawData.TeamIDs)));
+
+for ii = 1:numel(RawData.TeamIDs)
+    Data(ii).TeamID = RawData.TeamIDs(ii);
+    Data(ii).Raw = [];
+    Data(ii).NCAATourn = [];
+    Data(ii).Weighted = [];
+    Data(ii).sumStats = [];
+end 
+
+% The second Field will be a matrix contianing all stats from all games in 
+% which this team played, where the first n columns are their stats and the
+% second n columns are the stats against. The 2nd  to last column will be 
+% the opponent TeamID   the last column will be a boolean% of it htye won or not 
+
+% Regualr Season Games 
+for gm = 1:height(RawData.regularSeason)
+
+    % Find teams that played in this game 
+    WTeamIndx = find(RawData.TeamIDs  == RawData.regularSeason.WTeamIDYr(gm));
+    LTeamIndx = find(RawData.TeamIDs  == RawData.regularSeason.LTeamIDYr(gm)); 
+
+    % store reg seaso ngames in Data.Raw matrix 
+    WTeamData = [];
+    WTeamDataOpp = [];
+    LTeamData = [];
+    LTeamDataOpp = [];
+
+    for pp = 1:13
+    WTeamData = [WTeamData, RawData.regularSeason.(DetailedHeaders{pp+8})(gm)];
+    WTeamDataOpp = [WTeamDataOpp , RawData.regularSeason.(DetailedHeaders{pp+21})(gm)];
+    LTeamData = [LTeamData, RawData.regularSeason.(DetailedHeaders{pp+21})(gm)];
+    LTeamDataOpp = [LTeamDataOpp , RawData.regularSeason.(DetailedHeaders{pp+8})(gm)];
+    end 
+
+    WTeamData = [WTeamData, WTeamDataOpp, RawData.regularSeason.LTeamIDYr(gm),  1 ];
+    LTeamData = [LTeamData, LTeamDataOpp, RawData.regularSeason.WTeamIDYr(gm), 0 ];
+    Data(WTeamIndx).Raw = [Data(WTeamIndx).Raw; WTeamData];
+    Data(LTeamIndx).Raw = [Data(LTeamIndx).Raw; LTeamData];
+
+end 
+% Regualr Season Games Weighted 
+
+for gm = 1:height(RawData.regularSeason)
+
+    % Find teams that played in this game 
+    WTeamIndx = find(RawData.TeamIDs  == RawData.regularSeason.WTeamIDYr(gm));
+    LTeamIndx = find(RawData.TeamIDs  == RawData.regularSeason.LTeamIDYr(gm)); 
+
+    % store reg seaso ngames in Data.Raw matrix 
+    WTeamData = [];
+    WTeamDataOpp = [];
+    LTeamData = [];
+    LTeamDataOpp = [];
+
+    for pp = 1:13
+    WTeamData = [WTeamData, (RawData.regularSeason.(DetailedHeaders{pp+8})(gm) * RawData.TeamStats(LTeamIndx,45))];
+    WTeamDataOpp = [WTeamDataOpp , (RawData.regularSeason.(DetailedHeaders{pp+21})(gm) * (1 - RawData.TeamStats(LTeamIndx,45)))];
+    LTeamData = [LTeamData, (RawData.regularSeason.(DetailedHeaders{pp+21})(gm) * RawData.TeamStats(WTeamIndx,45))];
+    LTeamDataOpp = [LTeamDataOpp , (RawData.regularSeason.(DetailedHeaders{pp+8})(gm) * (1 - RawData.TeamStats(LTeamIndx,45)))];
+    end 
+
+    WTeamData = [WTeamData, WTeamDataOpp, RawData.regularSeason.LTeamIDYr(gm),  1 ];
+    LTeamData = [LTeamData, LTeamDataOpp, RawData.regularSeason.WTeamIDYr(gm), 0 ];
+    Data(WTeamIndx).Weighted = [Data(WTeamIndx).Weighted; WTeamData];
+    Data(LTeamIndx).Weighted = [Data(LTeamIndx).Weighted; LTeamData];
+
+end 
+%%
+% Create per game and SD 
+for tt = 1:length(Data)
+
+    for vv =  1:(length(Data(1).Raw)-2)
+        Data(tt).SumStats(1,vv) = mean(str2double(Data(tt).Weighted(:,vv)));
+        Data(tt).SumStats(2,vv) = std(str2double(Data(tt).Weighted(:,vv)));
+    end 
+end 
+
 %% Back to root 
 cd ..
 
 %% save as .mat 
-save("RawData.mat","RawData");
+save("RawData.mat","RawData","Data");
 
 %% Timer 
 fprintf("Data Management complete, %f seconds \n\n",toc(DataManTimer));

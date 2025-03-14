@@ -1,9 +1,10 @@
 %% CINDERELLA 
+clear; clc; close all
 % Main script - runs the MonteCarlo simulation n times and determines the
 % most common outcomes 
 
 % Number of iterations of monte Carlo Sim 
-n = 25;
+n = 3;
 
 % Run MonteCarlo
 
@@ -13,7 +14,7 @@ monteResults = monteCarlo(n);
 % Accumulate results 
 numGames = length(monteResults(1).gameMat);
 netWinners = strings(numGames,1);
-
+netWinners_confidence = NaN(numGames,1);
 
 for game = 1:numGames
     % store winners of this game across all sims 
@@ -26,13 +27,14 @@ for game = 1:numGames
     [uniqueTeams, ~,ic] = unique(gameWinners);
     counts = accumarray(ic,1);
 
-    [~, maxidx] = max(counts);
+    [count, maxidx] = max(counts);
     netWinners(game) = uniqueTeams(maxidx);
+    netWinners_confidence(game) = count / n;
 
 end 
 
 %% Visaulize Results 
+root = pwd;
+load(fullfile(root,"\Data\AnswerKey_2024.mat"));
 
-load("AnswerKey_2024.mat")
-
-BracketVisualization(netWinners,monteResults(1).gameMat,AnswerKey_2024)
+BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024)

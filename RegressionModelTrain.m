@@ -167,4 +167,98 @@ hold off
 % save
 save("Models\NN_reg","NNModel")
 
-%% Export Models 
+%% KNN 
+% Train KNN Regression Model
+KNNModel = fitcknn(X, Y_clas, ...
+    'NumNeighbors', 5, ... % Default number of neighbors
+    'Distance', 'euclidean', ... % Euclidean distance metric
+    'OptimizeHyperparameters', {'NumNeighbors', 'Distance'}, ... % Hyperparameter tuning
+    'HyperparameterOptimizationOptions', struct('AcquisitionFunctionName', 'expected-improvement-plus'));
+
+% Perform k-fold cross-validation
+k = 5; % Number of folds
+cv_KNNModel = crossval(KNNModel, 'KFold', k);
+
+% Compute Mean Squared Error (MSE)
+KNN_mse = kfoldLoss(cv_KNNModel);
+
+% Predict on training data
+Y_pred_KNN_Train = predict(KNNModel, X);
+
+% Compute performance metrics
+accuracy = sum(Y_pred_KNN_Train == Y_clas) / length(Y_clas);
+fprintf('KNN Accuracy: %.2f%%\n', accuracy * 100);
+
+% Save Model
+save("Models\KNN", "KNNModel")
+
+%% GPR
+% Train Gaussian Process Regression Model
+GPRModel = fitrgp(X, Y_reg, ...
+    'KernelFunction', 'squaredexponential', ... % Use Squared Exponential Kernel
+    'OptimizeHyperparameters', {'KernelScale', 'Sigma'}, ... % Tune these hyperparameters
+    'HyperparameterOptimizationOptions', struct('AcquisitionFunctionName', 'expected-improvement-plus'));
+
+% Perform k-fold cross-validation
+k = 5; % Number of folds
+cv_GPRModel = crossval(GPRModel, 'KFold', k);
+
+% Compute Mean Squared Error (MSE)
+GPR_mse = kfoldLoss(cv_GPRModel);
+
+% Make predictions on training data
+Y_pred_GPR_Train = predict(GPRModel, X);
+
+% Compute performance metrics
+GPR_rmse = sqrt(mean((Y_reg - Y_pred_GPR_Train).^2)); % Root Mean Squared Error
+GPR_r2 = corr(Y_reg, Y_pred_GPR_Train)^2; 
+
+fprintf('GPR Regression - RMSE: %.4f\n', GPR_rmse);
+fprintf('GPR Regression - R-squared: %.4f\n', GPR_r2);
+
+% Visualization of Results
+
+% Define logical indices for the quadrants
+green_idx = (Y_reg > 0 & Y_pred_GPR_Train > 0) | (Y_reg < 0 & Y_pred_GPR_Train < 0); % Upper right & lower left
+red_idx = ~green_idx; % All other points
+
+GPR_Class_acc = sum(green_idx) / (length(Y_pred_GPR_Train));
+
+figure()
+hold on 
+
+line([-30 30], [-30 30], 'Color', 'k', 'LineWidth', 2, 'LineStyle', '--') 
+
+scatter(Y_reg(green_idx), Y_pred_GPR_Train(green_idx), 50, 'g'); 
+scatter(Y_reg(red_idx), Y_pred_GPR_Train(red_idx), 50, 'r'); 
+
+xlabel('Actual Values');
+ylabel('Predicted Values');
+title('Gaussian Process Regression Predictions');
+legend({'Reference Line', 'Correct Quadrants (Green)', 'Incorrect Quadrants (Red)'}, 'Location', 'best');
+
+grid on;
+xlim([-30 30])
+ylim([-30 30])
+hold off
+
+% Save model
+save("Models\GPR", "GPRModel")
+
+%% Logistic Regression with Hyperparameter Tuning
+opts = struct('Optimizer', 'bayesopt', ...
+              'ShowPlots', true, ...
+              'AcquisitionFunctionName', 'expected-improvement-plus');
+
+% Train with Hyperparameter Tuning (without 'Solver')
+LRModel = fitclinear(X, Y_clas, 'Learner', 'logistic', ...
+    'OptimizeHyperparameters', {'Regularization', 'Lambda'}, ...
+    'HyperparameterOptimizationOptions', opts);
+
+% Make Predictions
+Y_pred = predict(LRModel, X);
+accuracyOptimized = mean(Y_pred == Y_clas);
+fprintf('Optimized Logistic Regression Accuracy: %.2f%%\n', accuracyOptimized * 100);
+
+% Save Model
+save("Models\LR.mat", "LRModel");
