@@ -1,6 +1,7 @@
-function [] = BracketVisualization(netWinners,Games,varargin)
+function [] = BracketVisualization(netWinners,netwin_conf, Games,varargin)
 
-Bracket = BracketBuilder(Games, netWinners);
+Bracket = BracketBuilder(Games, netWinners,netwin_conf);
+BracketCheck = BracketBuilder(Games, netWinners);
 if length(varargin) > 0
     answerKeyBracket = BracketBuilder(Games,varargin{1});
 end 
@@ -69,7 +70,7 @@ else
     
                 textStr = [Bracket(r, c)];
                 if c ~= 1 && c ~= col(end)
-                   if strcmp(Bracket(r,c),answerKeyBracket(r,c))
+                   if strcmp(BracketCheck(r,c),answerKeyBracket(r,c))
                         text(c*c_spacing, (row - r)*r_spacing + 1, textStr, 'HorizontalAlignment', 'center','FontSize', 6, 'Color','g');
                    else 
                         text(c*c_spacing, (row - r)*r_spacing + 1, textStr, 'HorizontalAlignment', 'center','FontSize', 6, 'Color', 'r');
