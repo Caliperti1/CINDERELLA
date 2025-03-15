@@ -11,10 +11,10 @@ The current method in this program is to train an ensamble of models based on pe
 
 ## Contents 
 
-# *CINDERELLA.m*
+### *CINDERELLA.m*
 This is the main loop which allows you to specifiy the number of iterations of the monte carlo. Pools results and creates a visualization of the predicted bracket. If using to test on previous years visualization method will score and colorcode the bracket based on the "answerkey"
 
-# *TournamentSim.m* 
+### *TournamentSim.m* 
 Simulates a single iteration of the NCAA Tournament. 
 
 
