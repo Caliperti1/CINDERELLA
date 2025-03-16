@@ -219,7 +219,7 @@ for gm = 1:height(RawData.confTournamentResults)
     WTeamIndx = find(RawData.TeamIDs == RawData.confTournamentResults.WTeamIDYr(gm));
     LTeamIndx = find(RawData.TeamIDs == RawData.confTournamentResults.LTeamIDYr(gm));
 
-    % Col 18: Season Wins 
+    % Col 18: Wins 
     RawData.TeamStats(WTeamIndx,18) =  RawData.TeamStats(WTeamIndx,18) + 1;
 
     % Col 19: Losses 
@@ -434,15 +434,28 @@ for gm = 1:height(RawData.regularSeason)
     Data(LTeamIndx).Weighted = [Data(LTeamIndx).Weighted; LTeamData];
 
 end 
-%%
-% Create per game and SD 
+%% Create AVG and SD for features 
 for tt = 1:length(Data)
-
-    for vv =  1:(length(Data(1).Raw)-2)
-        Data(tt).SumStats(1,vv) = mean(str2double(Data(tt).Weighted(:,vv)));
-        Data(tt).SumStats(2,vv) = std(str2double(Data(tt).Weighted(:,vv)));
+    szgames = size(Data(tt).Raw);
+    if szgames(1) > 10
+        for vv =  1:(length(Data(1).Raw)-2)
+            Data(tt).SumStats(1,vv) = mean(str2double(Data(tt).Weighted(:,vv)));
+            Data(tt).SumStats(2,vv) = std(str2double(Data(tt).Weighted(:,vv)));
+        end 
+    
+        % wins in last 5 games of season
+        Data(tt).Hotness(1) = sum(str2double(Data(tt).Raw(end-9:end,end)));
+    
+        % Weighted wins in last 5 games of season 
+        for gg = -9:0
+            OppIdx = find(RawData.TeamIDs  == Data(tt).Raw(end+gg,27)); 
+            weightedWinsLast10(gg+10) = str2double(Data(tt).Raw(end+gg,end)) * RawData.TeamStats(OppIdx,45);
+        end 
+        Data(tt).Hotness(2) = sum(weightedWinsLast10);
+        
     end 
 end 
+
 
 %% Back to root 
 cd ..

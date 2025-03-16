@@ -42,7 +42,7 @@ AnswerKey_2024 = ...
 
 % Round of 32
 
-    "Conneticut";
+    "Connecticut";
     "North Carolina";
     "Purdue";
     "Houston";
@@ -87,4 +87,4 @@ AnswerKey_2024 = ...
     "Connecticut" 
 ];
 
-save("AnswerKey_2024.mat")
+save("AnswerKey_2024.mat","AnswerKey_2024")

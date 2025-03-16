@@ -15,6 +15,8 @@ end
 load('RawData.mat')
 
 %% NCAA Tournament Games 
+X_NCAA = [];
+X_NCAA2 = [];
 
 for gm = 1:height(RawData.tournamentResults)
 
@@ -49,8 +51,8 @@ for gm = 1:height(RawData.tournamentResults)
         Y_clas_NCAA2(gm) = 0;
     end 
 
-    X_NCAA(gm,:) = FeatureEngineer(Team1IDYr,Team2IDYr, RawData,Data, 0, 0);
-    X_NCAA2(gm,:) = FeatureEngineer(Team1IDYr2,Team2IDYr2, RawData,Data, 0, 0);
+    X_NCAA(gm,:) = FeatureEngineer(Team1IDYr,Team2IDYr, RawData,Data);
+    X_NCAA2(gm,:) = FeatureEngineer(Team1IDYr2,Team2IDYr2, RawData,Data);
 
 end 
 
