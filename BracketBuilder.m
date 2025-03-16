@@ -2,7 +2,7 @@
 % Create Dict of teams and games to games matrix indexes 
 function Bracket = BracketBuilder(Games,netWins,varargin)
 if ~isempty(varargin)
-    netWin_conf = varargin{1}
+    netWin_conf = varargin{1};
     netWinners = strings(length(netWins),1);
     
     for jj = 1:length(netWins)

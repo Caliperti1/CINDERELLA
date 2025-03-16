@@ -9,6 +9,7 @@ end
 load('TrainingData.mat')
 
 %% Gradient Boosted Bagged Trees 
+GBtic = tic;
 
 GB_BaggedTree = fitrensemble(X, Y_reg, ...
     'Method', 'LSBoost', ... % Gradient Boosting
@@ -29,7 +30,6 @@ GB_BaggedTree_rmse = sqrt(mean((Y_reg - Y_pred_GB_BaggedTree_Train).^2)); % Root
 GB_BaggedTree_r2 = corr(Y_reg, Y_pred_GB_BaggedTree_Train)^2; 
 
 fprintf('Gradient Boosted Bagged Trees - RMSE: %.4f\n', GB_BaggedTree_rmse);
-fprintf('Gradient Boosted Bagged Trees - R-squared: %.4f\n', GB_BaggedTree_r2);
 
 % Define logical indices for the quadrants
 green_idx = (Y_reg > 0 & Y_pred_GB_BaggedTree_Train > 0) | (Y_reg < 0 & Y_pred_GB_BaggedTree_Train < 0); % Upper right & lower left
@@ -60,9 +60,12 @@ ylim([-30 30])
 hold off
 
 % save
+fprintf('Gradient Boosted Bagged Trees - Classification Accuracy: %.4f\n', GB_Bagged_Trees_Clas_Acc);
+fprintf('Training Time: %.2f \n ',toc(GBtic))
 save("Models\GBTreeReg","GB_BaggedTree")
 
 %% Support Vector Machine (SVM) Regression
+SVMtic = tic;
 
 SVMModel = fitrsvm(X, Y_reg, ...
     'KernelFunction', 'gaussian', ... % Use Gaussian (RBF) kernel
@@ -82,7 +85,6 @@ SVM_rmse = sqrt(mean((Y_reg - Y_pred_SVM_Train).^2)); % Root Mean Squared Error
 SVM_r2 = corr(Y_reg, Y_pred_SVM_Train)^2; 
 
 fprintf('SVM Regression - RMSE: %.4f\n', SVM_rmse);
-fprintf('SVM Regression - R-squared: %.4f\n', SVM_r2);
 
 % Visualization of Results
 
@@ -113,9 +115,12 @@ ylim([-30 30])
 hold off
 
 % save
+fprintf('Support Vector Machine - Classification Accuracy: %.4f\n', SVM_Class_acc);
+fprintf('Training Time: %.2f \n ',toc(SVMtic))
 save("Models\SVM","SVMModel")
 
 %% Neural Network Regression
+NNtic = tic;
 
 NNModel = fitrnet(X, Y_reg, ...
     'OptimizeHyperparameters', {'LayerSizes', 'Lambda', 'Standardize'}, ... % Tune all hyperparameters
@@ -134,7 +139,6 @@ NN_rmse = sqrt(mean((Y_reg - Y_pred_NN_Train).^2)); % Root Mean Squared Error
 NN_r2 = corr(Y_reg, Y_pred_NN_Train)^2; 
 
 fprintf('Neural Network Regression - RMSE: %.4f\n', NN_rmse);
-fprintf('Neural Network Regression - R-squared: %.4f\n', NN_r2);
 
 % Visualization of Results
 
@@ -165,9 +169,13 @@ ylim([-30 30])
 hold off
 
 % save
+fprintf('Shallow Neural Network - Classification Accuracy: %.4f\n', NN_class_acc);
+fprintf('Training Time: %.2f \n ',toc(NNtic))
 save("Models\NN_reg","NNModel")
 
 %% KNN 
+KNNtic = tic;
+
 % Train KNN Regression Model
 KNNModel = fitcknn(X, Y_clas, ...
     'NumNeighbors', 5, ... % Default number of neighbors
@@ -186,66 +194,71 @@ KNN_mse = kfoldLoss(cv_KNNModel);
 Y_pred_KNN_Train = predict(KNNModel, X);
 
 % Compute performance metrics
-accuracy = sum(Y_pred_KNN_Train == Y_clas) / length(Y_clas);
-fprintf('KNN Accuracy: %.2f%%\n', accuracy * 100);
+KNN_acc = sum(Y_pred_KNN_Train == Y_clas) / length(Y_clas);
+fprintf('KNN Accuracy: %.2f%%\n', KNN_acc * 100);
 
+fprintf('K-Nearest Neighbor - Classification Accuracy: %.4f\n', KNN_acc);
+fprintf('Training Time: %.2f \n ',toc(KNNtic))
 % Save Model
 save("Models\KNN", "KNNModel")
 
-%% GPR
-% Train Gaussian Process Regression Model
-GPRModel = fitrgp(X, Y_reg, ...
-    'KernelFunction', 'squaredexponential', ... % Use Squared Exponential Kernel
-    'OptimizeHyperparameters', {'KernelScale', 'Sigma'}, ... % Tune these hyperparameters
-    'HyperparameterOptimizationOptions', struct('AcquisitionFunctionName', 'expected-improvement-plus'));
-
-% Perform k-fold cross-validation
-k = 5; % Number of folds
-cv_GPRModel = crossval(GPRModel, 'KFold', k);
-
-% Compute Mean Squared Error (MSE)
-GPR_mse = kfoldLoss(cv_GPRModel);
-
-% Make predictions on training data
-Y_pred_GPR_Train = predict(GPRModel, X);
-
-% Compute performance metrics
-GPR_rmse = sqrt(mean((Y_reg - Y_pred_GPR_Train).^2)); % Root Mean Squared Error
-GPR_r2 = corr(Y_reg, Y_pred_GPR_Train)^2; 
-
-fprintf('GPR Regression - RMSE: %.4f\n', GPR_rmse);
-fprintf('GPR Regression - R-squared: %.4f\n', GPR_r2);
-
-% Visualization of Results
-
-% Define logical indices for the quadrants
-green_idx = (Y_reg > 0 & Y_pred_GPR_Train > 0) | (Y_reg < 0 & Y_pred_GPR_Train < 0); % Upper right & lower left
-red_idx = ~green_idx; % All other points
-
-GPR_Class_acc = sum(green_idx) / (length(Y_pred_GPR_Train));
-
-figure()
-hold on 
-
-line([-30 30], [-30 30], 'Color', 'k', 'LineWidth', 2, 'LineStyle', '--') 
-
-scatter(Y_reg(green_idx), Y_pred_GPR_Train(green_idx), 50, 'g'); 
-scatter(Y_reg(red_idx), Y_pred_GPR_Train(red_idx), 50, 'r'); 
-
-xlabel('Actual Values');
-ylabel('Predicted Values');
-title('Gaussian Process Regression Predictions');
-legend({'Reference Line', 'Correct Quadrants (Green)', 'Incorrect Quadrants (Red)'}, 'Location', 'best');
-
-grid on;
-xlim([-30 30])
-ylim([-30 30])
-hold off
-
-% Save model
-save("Models\GPR", "GPRModel")
+% %% GPR
+% GPRtic = tic;
+% % Train Gaussian Process Regression Model
+% GPRModel = fitrgp(X, Y_reg, ...
+%     'KernelFunction', 'squaredexponential', ... % Use Squared Exponential Kernel
+%     'OptimizeHyperparameters', {'KernelScale', 'Sigma'}, ... % Tune these hyperparameters
+%     'HyperparameterOptimizationOptions', struct('AcquisitionFunctionName', 'expected-improvement-plus'));
+% 
+% % Perform k-fold cross-validation
+% k = 5; % Number of folds
+% cv_GPRModel = crossval(GPRModel, 'KFold', k);
+% 
+% % Compute Mean Squared Error (MSE)
+% GPR_mse = kfoldLoss(cv_GPRModel);
+% 
+% % Make predictions on training data
+% Y_pred_GPR_Train = predict(GPRModel, X);
+% 
+% % Compute performance metrics
+% GPR_rmse = sqrt(mean((Y_reg - Y_pred_GPR_Train).^2)); % Root Mean Squared Error
+% GPR_r2 = corr(Y_reg, Y_pred_GPR_Train)^2; 
+% 
+% fprintf('GPR Regression - RMSE: %.4f\n', GPR_rmse);
+% 
+% % Visualization of Results
+% 
+% % Define logical indices for the quadrants
+% green_idx = (Y_reg > 0 & Y_pred_GPR_Train > 0) | (Y_reg < 0 & Y_pred_GPR_Train < 0); % Upper right & lower left
+% red_idx = ~green_idx; % All other points
+% 
+% GPR_Class_acc = sum(green_idx) / (length(Y_pred_GPR_Train));
+% 
+% figure()
+% hold on 
+% 
+% line([-30 30], [-30 30], 'Color', 'k', 'LineWidth', 2, 'LineStyle', '--') 
+% 
+% scatter(Y_reg(green_idx), Y_pred_GPR_Train(green_idx), 50, 'g'); 
+% scatter(Y_reg(red_idx), Y_pred_GPR_Train(red_idx), 50, 'r'); 
+% 
+% xlabel('Actual Values');
+% ylabel('Predicted Values');
+% title('Gaussian Process Regression Predictions');
+% legend({'Reference Line', 'Correct Quadrants (Green)', 'Incorrect Quadrants (Red)'}, 'Location', 'best');
+% 
+% grid on;
+% xlim([-30 30])
+% ylim([-30 30])
+% hold off
+% 
+% % Save model
+% fprintf('Gaussian Proccess Regression - Classification Accuracy: %.4f\n', GPR_Class_acc);
+% fprintf('Training Time: %.2f \n ',toc(GPRtic))
+% save("Models\GPR", "GPRModel")
 
 %% Logistic Regression with Hyperparameter Tuning
+LRtic = tic;
 opts = struct('Optimizer', 'bayesopt', ...
               'ShowPlots', true, ...
               'AcquisitionFunctionName', 'expected-improvement-plus');
@@ -261,4 +274,6 @@ accuracyOptimized = mean(Y_pred == Y_clas);
 fprintf('Optimized Logistic Regression Accuracy: %.2f%%\n', accuracyOptimized * 100);
 
 % Save Model
+fprintf('Logistic Regression - Classification Accuracy: %.4f\n', SVM_Class_acc);
+fprintf('Training Time: %.2f \n ',toc(LRtic))
 save("Models\LR.mat", "LRModel");

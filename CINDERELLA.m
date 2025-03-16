@@ -1,15 +1,16 @@
 %% CINDERELLA 
 clear; clc; close all
+
+configs
 % Main script - runs the MonteCarlo simulation n times and determines the
 % most common outcomes 
 
 % Number of iterations of monte Carlo Sim 
-n = 3;
+n = 1000;
 
 % Run MonteCarlo
 
 monteResults = monteCarlo(n);
-
 
 % Accumulate results 
 numGames = length(monteResults(1).gameMat);
@@ -37,4 +38,10 @@ end
 root = pwd;
 load(fullfile(root,"\Data\AnswerKey_2024.mat"));
 
-BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024)
+BracketFigure = BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024);
+
+%% Save Results 
+fileName = "Results_" + num2str(n) + "iter_" + tournamentYear +".mat";
+save(fileName,BracketFigure)
+
+
