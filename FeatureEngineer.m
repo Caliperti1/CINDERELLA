@@ -3,7 +3,7 @@
 % RawData.TeamStats. featureSet input determines which set of features is
 % generated for the two teams, options explained below
 
-function FeatureSet = FeatureEngineer(TeamIDYr1,TeamIDYr2, RawData,Data, Team1rand, Team2rand)
+function FeatureSet = FeatureEngineer(TeamIDYr1,TeamIDYr2, RawData,Data, varargin)
 
 % Find ID of teams 
     Team1Idx= find(RawData.TeamIDs  == TeamIDYr1);
@@ -267,11 +267,24 @@ function FeatureSet = FeatureEngineer(TeamIDYr1,TeamIDYr2, RawData,Data, Team1ra
 %                 RawData.TeamStats(Team2Idx,18);
 % 
 %% Method 2: Monte Carlo the Features
-% Radom number between -1.5 and 1.5 to account for ' good day and bad day'
+% Radom number between -1.5 and 1.5 SD to account for ' good day and bad day'
+    if ~isempty(varargin)
+        for jj = 1:length(Data(Team1Idx).SumStats(1,:))
+            Team1rand = -1.5 + (3 * rand);
+            Team2rand = -1.5 + (3 * rand);
+            Team1Feats(jj) = Data(Team1Idx).SumStats(1,jj) + (Team1rand * Data(Team1Idx).SumStats(2,jj));
+            Team2Feats(jj) = Data(Team2Idx).SumStats(1,jj) + (Team2rand * Data(Team2Idx).SumStats(2,jj));
+        end 
+    else 
 
-    Team1Feats = Data(Team1Idx).SumStats(1,:) + (Team1rand * Data(Team1Idx).SumStats(2,:));
-    Team2Feats = Data(Team2Idx).SumStats(1,:) + (Team2rand * Data(Team2Idx).SumStats(2,:));
+        Team1Feats = Data(Team1Idx).SumStats(1,:);
+        Team2Feats = Data(Team2Idx).SumStats(1,:);
+    end 
  
+    % Add Hotness stats (conf tounry wins, wins last 10, weighted wins last
+    % 10)
+    Team1Feats = [Team1Feats RawData.TeamStats(Team1Idx,18) Data(Team1Idx).Hotness(1) Data(Team1Idx).Hotness(2)];
+    Team2Feats = [Team2Feats RawData.TeamStats(Team2Idx,18) Data(Team2Idx).Hotness(2) Data(Team2Idx).Hotness(2)];
 %% Combine Features 
 
 FeatureSet = [Team1Feats Team2Feats];

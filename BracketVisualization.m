@@ -1,4 +1,4 @@
-function [] = BracketVisualization(netWinners,netwin_conf, Games,varargin)
+function [BracketFigure] = BracketVisualization(netWinners,netwin_conf, Games,varargin)
 
 Bracket = BracketBuilder(Games, netWinners,netwin_conf);
 BracketCheck = BracketBuilder(Games, netWinners);
@@ -14,7 +14,7 @@ if length(varargin) == 0
     c_spacing = 6;
     r_spacing = .75;
     
-    figure;
+    BracketFigure = figure;
     hold on;
     axis equal;
     xlim([0, (col+1) * c_spacing]);
@@ -52,7 +52,7 @@ else
     c_spacing = 6;
     r_spacing = .75;
     
-    figure;
+    BracketFigure = figure;
     hold on;
     axis equal;
     xlim([0, (col+1) * c_spacing]);
