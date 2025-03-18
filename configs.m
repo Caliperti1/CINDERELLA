@@ -1,5 +1,2 @@
 %% configs 
-
-% model type  
-modelType = 'Regression';
-tournamentYear = 2024;
+tournamentYear = 2025;

@@ -12,7 +12,7 @@ DataManTimer = tic;
 cd Data\
 
 %% Tournament Seeds Key 
-TournamentSeeds = readtable("2024_tourney_seeds.csv");
+TournamentSeeds = readtable("2025_tourney_seeds.csv");
 TournamentSeeds.Seed = string(TournamentSeeds.Seed);
 TournamentSeeds.Tournament = string(TournamentSeeds.Tournament);
 TournamentSeeds = TournamentSeeds(TournamentSeeds.Tournament == "M",:);
@@ -36,7 +36,7 @@ RawData.confTournamentResults = readtable('MConferenceTourneyGames.csv');
 RawData.Conferences = readtable("MTeamConferences.csv");
 
 % Current Year Tournament Seeds
-RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
+RawData.TournamentSeeds = readtable('2025_tourney_seeds.csv');
 RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);
 
 % Team Names 
@@ -422,9 +422,9 @@ for gm = 1:height(RawData.regularSeason)
     LTeamDataOpp = [];
 
     for pp = 1:13
-    WTeamData = [WTeamData, (RawData.regularSeason.(DetailedHeaders{pp+8})(gm) * RawData.TeamStats(LTeamIndx,45))];
+    WTeamData = [WTeamData, (RawData.regularSeason.(DetailedHeaders{pp+8})(gm) * (RawData.TeamStats(LTeamIndx,1) * RawData.TeamStats(LTeamIndx,45)))];
     WTeamDataOpp = [WTeamDataOpp , (RawData.regularSeason.(DetailedHeaders{pp+21})(gm) * (1 - RawData.TeamStats(LTeamIndx,45)))];
-    LTeamData = [LTeamData, (RawData.regularSeason.(DetailedHeaders{pp+21})(gm) * RawData.TeamStats(WTeamIndx,45))];
+    LTeamData = [LTeamData, (RawData.regularSeason.(DetailedHeaders{pp+21})(gm) * (RawData.TeamStats(WTeamIndx,1) *RawData.TeamStats(WTeamIndx,45)))];
     LTeamDataOpp = [LTeamDataOpp , (RawData.regularSeason.(DetailedHeaders{pp+8})(gm) * (1 - RawData.TeamStats(LTeamIndx,45)))];
     end 
 

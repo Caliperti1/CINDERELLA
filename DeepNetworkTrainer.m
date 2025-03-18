@@ -57,9 +57,3 @@ YPred = classify(DeepNet, XValidation);
 accuracy = mean(YPred == YValidation);
 fprintf('Validation Accuracy: %.2f%%\n', accuracy * 100);
 
-%% Save & Use the Model
-save("Models\DeepNet.mat", "DeepNet")
-
-% Example usage: Predicting a new game outcome
-predictedWinner = classify(DeepNet, newGameStats);
-fprintf('Predicted Winner: %s\n', char(predictedWinner));

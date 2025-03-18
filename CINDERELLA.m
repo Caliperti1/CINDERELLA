@@ -35,13 +35,22 @@ for game = 1:numGames
 end 
 
 %% Visaulize Results 
-root = pwd;
-load(fullfile(root,"\Data\AnswerKey_2024.mat"));
+% root = pwd;
+% load(fullfile(root,"\Data\AnswerKey_2024.mat"));
 
-BracketFigure = BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024);
+BracketFigure = BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat);
 
 %% Save Results 
-fileName = "Results_" + num2str(n) + "iter_" + tournamentYear +".mat";
-save(fileName,BracketFigure)
+cd Results\
+BracketfileName = "Results_" + num2str(n) + "_iter_" + tournamentYear +".png";
+saveas("BracketFigure",BracketfileName)
 
 
+
+%% If predicting using older seasons
+if tournamentYear < 2025
+    DistFigure = DistrobutionVisualiztion(monteResults,netWinners,AnswerKey_2024);
+    BracketFigure = BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024);
+    DistfileName = "Distrobution_" + num2str(n) + "iter_" + tournamentYear +".mat";
+    save(DistfileName,"DistFigure")
+end 

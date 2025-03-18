@@ -270,8 +270,8 @@ function FeatureSet = FeatureEngineer(TeamIDYr1,TeamIDYr2, RawData,Data, varargi
 % Radom number between -1.5 and 1.5 SD to account for ' good day and bad day'
     if ~isempty(varargin)
         for jj = 1:length(Data(Team1Idx).SumStats(1,:))
-            Team1rand = -1.5 + (3 * rand);
-            Team2rand = -1.5 + (3 * rand);
+            Team1rand = randn(1);
+            Team2rand = randn(1);
             Team1Feats(jj) = Data(Team1Idx).SumStats(1,jj) + (Team1rand * Data(Team1Idx).SumStats(2,jj));
             Team2Feats(jj) = Data(Team2Idx).SumStats(1,jj) + (Team2rand * Data(Team2Idx).SumStats(2,jj));
         end 

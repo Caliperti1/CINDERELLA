@@ -46,6 +46,7 @@ if length(varargin) == 0
 else 
 
     Score = ScoreBracket(netWinners,varargin{1});
+    Score = sum(Score);
 
         [row, col] = size(answerKeyBracket);
     
