@@ -43,3 +43,6 @@
 # Hidden system files (Mac & Windows)
 Thumbs.db
 desktop.ini
+
+# Ignore Data Folder 
+Data/
