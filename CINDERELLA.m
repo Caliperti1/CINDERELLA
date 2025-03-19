@@ -6,7 +6,7 @@ configs
 % most common outcomes 
 
 % Number of iterations of monte Carlo Sim 
-n = 1000;
+n = 10000;
 
 % Run MonteCarlo
 
