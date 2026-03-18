@@ -5,14 +5,14 @@
 % Laod configs 
 configs
 
+matlabDir = fileparts(mfilename('fullpath'));
+projectRoot = fileparts(matlabDir);
+dataDir = fullfile(projectRoot, 'DATA');
+
 % Timer 
 DataManTimer = tic;
-% Set Data directory 
-
-cd Data\
-
 %% Tournament Seeds Key 
-TournamentSeeds = readtable("2024_tourney_seeds.csv");
+TournamentSeeds = readtable(fullfile(dataDir, "2024_tourney_seeds.csv"));
 TournamentSeeds.Seed = string(TournamentSeeds.Seed);
 TournamentSeeds.Tournament = string(TournamentSeeds.Tournament);
 TournamentSeeds = TournamentSeeds(TournamentSeeds.Tournament == "M",:);
@@ -21,29 +21,29 @@ TournamentSeeds = TournamentSeeds(TournamentSeeds.Tournament == "M",:);
 %% Load Data
 
 % Team Names 
-teamIDs = readtable('MTeams.csv');
+teamIDs = readtable(fullfile(dataDir, 'MTeams.csv'));
 
 % Detailed Regular Season results 
-RawData.regularSeason = readtable('MRegularSeasonDetailedResults.csv');
+RawData.regularSeason = readtable(fullfile(dataDir, 'MRegularSeasonDetailedResults.csv'));
 
 % Detialed Tournament results 
-RawData.tournamentResults = readtable('MNCAATourneyDetailedResults.csv');
+RawData.tournamentResults = readtable(fullfile(dataDir, 'MNCAATourneyDetailedResults.csv'));
 
 % Conference Tournament results 
-RawData.confTournamentResults = readtable('MConferenceTourneyGames.csv');
+RawData.confTournamentResults = readtable(fullfile(dataDir, 'MConferenceTourneyGames.csv'));
 
 % Teams in each conference 
-RawData.Conferences = readtable("MTeamConferences.csv");
+RawData.Conferences = readtable(fullfile(dataDir, "MTeamConferences.csv"));
 
 % Current Year Tournament Seeds
-RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
+RawData.TournamentSeeds = readtable(fullfile(dataDir, '2024_tourney_seeds.csv'));
 RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);
 
 % Team Names 
-RawData.TeamNames = readtable('MTeams.csv');
+RawData.TeamNames = readtable(fullfile(dataDir, 'MTeams.csv'));
 
 % Secondary Tournament 
-RawData.OtherTourns = readtable("MSecondaryTourneyCompactResults.csv");
+RawData.OtherTourns = readtable(fullfile(dataDir, "MSecondaryTourneyCompactResults.csv"));
 
 
 %% Helpers 
@@ -457,11 +457,8 @@ for tt = 1:length(Data)
 end 
 
 
-%% Back to root 
-cd ..
-
 %% save as .mat 
-save("RawData.mat","RawData","Data");
+save(fullfile(matlabDir, "RawData.mat"),"RawData","Data");
 
 %% Timer 
 fprintf("Data Management complete, %f seconds \n\n",toc(DataManTimer));

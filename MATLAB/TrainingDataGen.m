@@ -8,11 +8,14 @@
 % flipping team 1 and team 2 
 
 %% Load Data 
-if ~exist('RawData.mat','file')
+matlabDir = fileparts(mfilename('fullpath'));
+rawDataFile = fullfile(matlabDir, 'RawData.mat');
+
+if ~isfile(rawDataFile)
     DataManager
 end 
 
-load('RawData.mat')
+load(rawDataFile)
 
 %% NCAA Tournament Games 
 X_NCAA = [];
@@ -63,4 +66,4 @@ Y_reg = [Y_reg_NCAA Y_reg_NCAA2]';
 Y_clas = [Y_clas_NCAA Y_clas_NCAA2]';
 X = [X_NCAA; X_NCAA2];
 % X = str2double(X);
-save("TrainingData.mat","X","Y_clas","Y_reg");
+save(fullfile(matlabDir, "TrainingData.mat"),"X","Y_clas","Y_reg");
