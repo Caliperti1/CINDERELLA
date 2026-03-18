@@ -1,6 +1,11 @@
 %% CINDERELLA 
 clear; clc; close all
 
+matlabDir = fileparts(mfilename('fullpath'));
+projectRoot = fileparts(matlabDir);
+dataDir = fullfile(projectRoot, 'DATA');
+addpath(matlabDir);
+
 configs
 % Main script - runs the MonteCarlo simulation n times and determines the
 % most common outcomes 
@@ -35,13 +40,12 @@ for game = 1:numGames
 end 
 
 %% Visaulize Results 
-root = pwd;
-load(fullfile(root,"\Data\AnswerKey_2024.mat"));
+load(fullfile(dataDir, 'AnswerKey_2024.mat'));
 
 BracketFigure = BracketVisualization(netWinners,netWinners_confidence, monteResults(1).gameMat,AnswerKey_2024);
 
 %% Save Results 
 fileName = "Results_" + num2str(n) + "iter_" + tournamentYear +".mat";
-save(fileName,BracketFigure)
+save(fullfile(projectRoot, fileName),BracketFigure)
 
 

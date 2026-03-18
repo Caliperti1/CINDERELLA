@@ -13,9 +13,14 @@ TrainingDataGen
 fprintf("Training Data Generation Complete: %.2f \n", toc(TDtic))
 
 % Train Models 
-RMTtic = tic;
-RegressionModelTrain
-fprintf("Simple Model train Complete: %.2f \n", toc(RMTtic))
+CLFtic = tic;
+ClassifierModelTrain
+fprintf("Classifier model training complete: %.2f \n", toc(CLFtic))
+
+% NOTE:
+% RegressionModelTrain is intentionally NOT called by default anymore.
+% We keep that file in the repo for experimentation, but production voting
+% now uses classifier-only models.
 
 DNtic = tic;
 DeepNetworkTrainer

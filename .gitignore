@@ -43,3 +43,6 @@
 # Hidden system files (Mac & Windows)
 Thumbs.db
 desktop.ini
+
+# Local 2026 raw data dump (do not version)
+Data/march-machine-learning-mania-2026/

@@ -11,11 +11,14 @@ configs
 ModelAggregate
 
 %% Load data for testing 
-if ~exist('RawData.mat','file')
+matlabDir = fileparts(mfilename('fullpath'));
+rawDataFile = fullfile(matlabDir, 'RawData.mat');
+
+if ~isfile(rawDataFile)
     DataManager
 end 
 
-load('RawData.mat')
+load(rawDataFile)
 % RawData.TournamentSeeds = readtable('2024_tourney_seeds.csv');
 % RawData.TeamNames = readtable('MTeams.csv');
 % RawData.TournamentSeeds = RawData.TournamentSeeds(RawData.TournamentSeeds.Tournament == "M",:);

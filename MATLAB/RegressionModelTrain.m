@@ -2,11 +2,16 @@
 % Trains a variety of models, saves them to models folder and evaluates performance 
 
 %% Load Data 
-if ~exist('Features.mat','file')
+matlabDir = fileparts(mfilename('fullpath'));
+projectRoot = fileparts(matlabDir);
+trainingDataFile = fullfile(matlabDir, 'TrainingData.mat');
+modelsDir = fullfile(projectRoot, 'Models');
+
+if ~isfile(trainingDataFile)
     TrainingDataGen
 end 
 
-load('TrainingData.mat')
+load(trainingDataFile)
 
 %% Gradient Boosted Bagged Trees 
 GBtic = tic;
@@ -62,7 +67,7 @@ hold off
 % save
 fprintf('Gradient Boosted Bagged Trees - Classification Accuracy: %.4f\n', GB_Bagged_Trees_Clas_Acc);
 fprintf('Training Time: %.2f \n ',toc(GBtic))
-save("Models\GBTreeReg","GB_BaggedTree")
+save(fullfile(modelsDir, 'GBTreeReg.mat'),"GB_BaggedTree")
 
 %% Support Vector Machine (SVM) Regression
 SVMtic = tic;
@@ -117,7 +122,7 @@ hold off
 % save
 fprintf('Support Vector Machine - Classification Accuracy: %.4f\n', SVM_Class_acc);
 fprintf('Training Time: %.2f \n ',toc(SVMtic))
-save("Models\SVM","SVMModel")
+save(fullfile(modelsDir, 'SVM.mat'),"SVMModel")
 
 %% Neural Network Regression
 NNtic = tic;
@@ -171,7 +176,7 @@ hold off
 % save
 fprintf('Shallow Neural Network - Classification Accuracy: %.4f\n', NN_class_acc);
 fprintf('Training Time: %.2f \n ',toc(NNtic))
-save("Models\NN_reg","NNModel")
+save(fullfile(modelsDir, 'NN_reg.mat'),"NNModel")
 
 %% KNN 
 KNNtic = tic;
@@ -200,7 +205,7 @@ fprintf('KNN Accuracy: %.2f%%\n', KNN_acc * 100);
 fprintf('K-Nearest Neighbor - Classification Accuracy: %.4f\n', KNN_acc);
 fprintf('Training Time: %.2f \n ',toc(KNNtic))
 % Save Model
-save("Models\KNN", "KNNModel")
+save(fullfile(modelsDir, 'KNN.mat'), "KNNModel")
 
 % %% GPR
 % GPRtic = tic;
@@ -274,6 +279,6 @@ accuracyOptimized = mean(Y_pred == Y_clas);
 fprintf('Optimized Logistic Regression Accuracy: %.2f%%\n', accuracyOptimized * 100);
 
 % Save Model
-fprintf('Logistic Regression - Classification Accuracy: %.4f\n', SVM_Class_acc);
+fprintf('Logistic Regression - Classification Accuracy: %.4f\n', accuracyOptimized);
 fprintf('Training Time: %.2f \n ',toc(LRtic))
-save("Models\LR.mat", "LRModel");
+save(fullfile(modelsDir, 'LR.mat'), "LRModel");
